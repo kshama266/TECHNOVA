@@ -22,7 +22,16 @@ pipeline {
             }
         }
 
-        // Security scan stage skipped until you install Trivy
+        stage('Trivy Security Scan') {
+            steps {
+                script {
+                    sh '''
+                        echo "Running Trivy scan..."
+                        trivy image --severity HIGH,CRITICAL --no-progress -f table -o trivy-report.txt ${IMAGE_NAME} || true
+                        cat trivy-report.txt
+                        }
+                 }
+         }
 
         stage('Deploy') {
             steps {
@@ -43,3 +52,4 @@ pipeline {
         }
     }
 }
+
